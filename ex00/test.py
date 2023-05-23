@@ -43,7 +43,7 @@ try:
 	book.add_recipe(new_recipe)
 	print(str(book))
 	if before_update == book.last_update:  # before_update should not be equal last_update
-		print('Error ! add_recipe does not update last_update')
+		print('Error ! add_recipe() does not update last_update')
 
 except (ValueError, TypeError) as e:
 	print(f'Invalid parameter: {e.args[0]}', file=stderr)
