@@ -30,11 +30,25 @@ class Vector:
 		# Initialization of shape
 		self.shape = (len(self.values), 1) if len(self.values) > 1 else (1, len(self.values[0]))
 
+	def dot(self, other):
+		if not isinstance(other, Vector):
+			raise TypeError("dot argument must be a vector")
+		if self.shape != other.shape:
+			raise ValueError("dot vector shapes do not match.")
+		result = 0
+		for v1, v2 in zip(self.values, other.values):
+			for x, y in (zip(v1, v2)):
+				result += x * y
+		return result
+
+	def T(self):
+		result = [[x for x in val] for val in zip(*self.values)]
+		return Vector(result)
+
 	# Addition operator
 	def __add__(self, other):
-		if isinstance(other, (int, float)):
-			result = [[x + other for x in val] for val in self.values]
-			return Vector(result)
+		if not isinstance(other, Vector):
+			raise TypeError("__add__ argument must be a vector.")
 		if self.shape != other.shape:
 			raise ValueError("__add__ vector shapes do not match.")
 		result = [[x + y for x, y in zip(v1, v2)] for v1, v2 in zip(self.values, other.values)]
@@ -45,9 +59,8 @@ class Vector:
 
 	# Substraction operator
 	def __sub__(self, other):
-		if isinstance(other, (int, float)):
-			result = [[x - other for x in val] for val in self.values]
-			return Vector(result)
+		if not isinstance(other, Vector):
+			raise TypeError("__sub__ argument must be a vector.")
 		if self.shape != other.shape:
 			raise ValueError("__sub__ vector shapes do not match.")
 		result = [[x - y for x, y in zip(v1, v2)] for v1, v2 in zip(self.values, other.values)]
@@ -58,9 +71,18 @@ class Vector:
 
 	# Division operator
 	def __truediv__(self, other):
-		if not isinstance(other, (int, float)):
-			raise TypeError("__truediv__ only works with scalars that in either an integer or a float.")
-		result = [[x / other for x in val] for val in self.values]
+		if isinstance(other, (int, float)):
+			if other == 0:
+				raise ZeroDivisionError("__truediv__ forbidden division by zero.")
+			result = [[x / other for x in val] for val in self.values]
+		elif isinstance(other, Vector):
+			if self.shape != other.shape:
+					raise ValueError("__truediv__ vector shapes do not match.")
+			if any(0 in val for val in other.values):
+				raise ZeroDivisionError("__truediv__ forbidden division by zero.")
+			result = [[x / y for x, y in zip(v1, v2)] for v1, v2 in zip(self.values, other.values)]
+		else:
+			raise TypeError("__truediv__ argument must be a scalar or a vector.")
 		return Vector(result)
 
 	def __rtruediv__(self, other):
@@ -68,9 +90,14 @@ class Vector:
 
 	# Multiplication operator
 	def __mul__(self, other):
-		if not isinstance(other, (int, float)):
-			raise TypeError("__mul__ only works with scalars that in either an integer or a float.")
-		result = [[x * other for x in val] for val in self.values]
+		if isinstance(other, (int, float)):
+			result = [[x * other for x in val] for val in self.values]
+		elif isinstance(other, Vector):
+			if self.shape != other.shape:
+				raise ValueError("__mul__ vector shapes do not match.")
+			result = [[x * y for x, y in zip(v1, v2)] for v1, v2 in zip(self.values, other.values)]
+		else:
+			raise TypeError("__mul__ argument must be a scalar or a vector.")
 		return Vector(result)
 
 	def __rmul__(self, other):
