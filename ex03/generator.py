@@ -7,6 +7,14 @@ def shuffle(words):
 		words[i], words[j] = words[j], words[i]
 	return words
 
+def unique(words):
+	new_words = []
+	[new_words.append(word) for word in words if not word in new_words]
+	return new_words
+
+def ordered(words):
+	return sorted(words)
+
 def generator(text, sep=" ", option=None):
 	'''Splits the text according to sep value and yield the substrings.
 	option precise if a action is performed to the substrings before it is yielded.
@@ -17,9 +25,9 @@ def generator(text, sep=" ", option=None):
 	if option == "shuffle":
 		text = shuffle(text)
 	elif option == "unique":
-		pass
+		text = unique(text)
 	elif option == "ordered":
-		pass
+		text = ordered(text)
 	for word in text:
 		yield word
 
