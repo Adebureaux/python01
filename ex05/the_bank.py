@@ -28,9 +28,11 @@ class Bank(object):
 		"""Add new_account in the Bank
     @new_account: Account() new account to append
     @return True if success, False if an error occured"""
-		# test if new_account is an Account() instance and if
-		# it can be appended to the attribute accounts
-		# ... Your code ...
+		if not isinstance(new_account, Account):
+			return False
+		for account in self.accounts:
+			if new_account.name == account.name:
+				return False
 		self.accounts.append(new_account)
 
 	def transfer(self, origin, dest, amount):
@@ -45,35 +47,42 @@ class Bank(object):
 		"""Fix account associated to name if corrupted
     @name: str(name) of the account
     @return True if success, False if an error occured"""
-		pass
+		recover = None
+		for account in self.accounts:
+			if account.name == name:
+				recover = account.__dict__.items()
+		if recover is None:
+			return False
+		
+		print(recover)
+		return True
+
+	def _is_valid_transaction(self, origin_account, dest_account, amount):
+		return amount >= 0 and origin_account.value >= amount
 
 	def _is_valid_account(self, account):
 		account_attrs = dir(account)
 		return (
 			len(account_attrs) % 2 == 1
 			and not any(attr.startswith('b') for attr in account_attrs)
-			and not any(attr.startswith(('zip', 'addr')) for attr in account_attrs)
+			and any(attr.startswith('zip') for attr in account_attrs)
+			and any(attr.startswith('addr') for attr in account_attrs)
 			and 'name' in account_attrs
 			and 'id' in account_attrs
 			and 'value' in account_attrs
 			and isinstance(account.name, str)
 			and isinstance(account.id, int)
 			and isinstance(account.value, (int, float))
-	)
-
-	def _is_valid_transaction(self, origin_account, dest_account, amount):
-		return amount >= 0 and origin_account.value >= amount
-
-	def _is_corrupted_account(self, account):
-		account_attrs = dir(account)
-		return (
-			len(account_attrs) % 2 == 0
-			or any(attr.startswith('b') for attr in account_attrs)
-			or any(attr.startswith(('zip', 'addr')) for attr in account_attrs)
-			or 'name' not in account_attrs
-			or 'id' not in account_attrs
-			or 'value' not in account_attrs
-			or not isinstance(account.name, str)
-			or not isinstance(account.id, int)
-			or not isinstance(account.value, (int, float))
 		)
+
+bank = Bank()
+account = Account(
+	'Smith Jane',
+	zip='911-745',
+	addr='abc',
+	value=1000.0,
+	ref='1044618427ff2782f0bbece0abd05f31')
+bank.add(account)
+
+print(bank._is_valid_account(account))
+print(bank.fix_account("Smith Jane"))
