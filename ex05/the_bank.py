@@ -50,7 +50,7 @@ class Bank(object):
 		recover = None
 		for account in self.accounts:
 			if account.name == name:
-				recover = account.__dict__.items()
+				recover = account.__dict__
 		if recover is None:
 			return False
 		
@@ -60,8 +60,8 @@ class Bank(object):
 	def _is_valid_transaction(self, origin_account, dest_account, amount):
 		return amount >= 0 and origin_account.value >= amount
 
-	def _is_valid_account(self, account):
-		account_attrs = dir(account)
+	def _is_valid(self, account):
+		account_attrs = account.__dict__
 		return (
 			len(account_attrs) % 2 == 1
 			and not any(attr.startswith('b') for attr in account_attrs)
@@ -84,5 +84,5 @@ account = Account(
 	ref='1044618427ff2782f0bbece0abd05f31')
 bank.add(account)
 
-print(bank._is_valid_account(account))
+print(bank._is_valid(account))
 print(bank.fix_account("Smith Jane"))
