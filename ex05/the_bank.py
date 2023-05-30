@@ -41,24 +41,63 @@ class Bank(object):
     @dest: str(name) of the destination account
     @amount: float(amount) amount to transfer
     @return True if success, False if an error occured"""
-		pass
+		if not isinstance(amount, (int, float)) or amount < 0:
+			return False
+		debtor = None
+		creditor = None
+		for account in self.accounts:
+			if account.name == origin:
+				debtor = account
+			if account.name == dest:
+				creditor = account
+			if debtor != None and creditor != None:
+				break
+		if debtor == None or creditor == None:
+			return False
+		if not self._is_valid(debtor) or not self._is_valid(creditor):
+			return False
+		if debtor == creditor:
+			return True
+		if debtor.value < amount:
+			return False
+		debtor.transfer(-amount)
+		creditor.transfer(amount)
+		return True
 
 	def fix_account(self, name):
 		"""Fix account associated to name if corrupted
     @name: str(name) of the account
     @return True if success, False if an error occured"""
+		if not isinstance(name, str):
+			return False
 		recover = None
 		for account in self.accounts:
 			if account.name == name:
 				recover = account.__dict__
+				fixed = account
 		if recover is None:
 			return False
-		
-		print(recover)
-		return True
-
-	def _is_valid_transaction(self, origin_account, dest_account, amount):
-		return amount >= 0 and origin_account.value >= amount
+		topop = []
+		for attr in recover:
+			if attr.startswith('b'):
+				topop.append(attr)
+		for pop in topop:
+			recover.pop(pop)
+		if not any(attr.startswith('zip') for attr in recover):
+			recover['zip'] = "000-000"
+		if not any(attr.startswith('addr') for attr in recover):
+			recover['addr'] = "1 rue de la corruption"
+		if not 'id' in recover or not isinstance(recover['id'], int):
+			recover['id'] = Account.ID_COUNT
+			Account.ID_COUNT += 1
+		if not 'value' in recover or not isinstance(recover['value'], (int, float)):
+			recover['value'] = 0
+		if len(recover) % 2 == 0:
+			for attr in recover:
+				if not attr.startswith('zip') and not attr.startswith('addr') and attr != 'id' and attr != 'value' and attr != 'name':
+					recover.pop(attr)
+					break
+		return self._is_valid(fixed)
 
 	def _is_valid(self, account):
 		account_attrs = account.__dict__
@@ -74,15 +113,3 @@ class Bank(object):
 			and isinstance(account.id, int)
 			and isinstance(account.value, (int, float))
 		)
-
-bank = Bank()
-account = Account(
-	'Smith Jane',
-	zip='911-745',
-	addr='abc',
-	value=1000.0,
-	ref='1044618427ff2782f0bbece0abd05f31')
-bank.add(account)
-
-print(bank._is_valid(account))
-print(bank.fix_account("Smith Jane"))
