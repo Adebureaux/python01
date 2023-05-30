@@ -31,5 +31,6 @@ def generator(text, sep=" ", option=None):
 	for word in text:
 		yield word
 
-for word in generator("Le Lorem Ipsum est simplement du faux texte.", " ", "shuffle"):
-	print(word)
+if __name__ == "__main__":
+	for word in generator("Le Lorem Ipsum est simplement du faux texte.", " ", "shuffle"):
+		print(word)
