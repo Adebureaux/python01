@@ -36,5 +36,5 @@ if __name__ == "__main__":
 	daenerys.print_house_words()
 	print(daenerys.is_alive)
 	daenerys.die()
-	print(arya.__dict__)
-	print(arya.__doc__)
+	print(daenerys.__dict__)
+	print(daenerys.__doc__)
