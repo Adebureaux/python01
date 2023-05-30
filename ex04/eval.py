@@ -1,6 +1,6 @@
 class Evaluator:
 	@staticmethod
-	def zip_evaluate(words, coefs):
+	def zip_evaluate(coefs, words):
 		if not isinstance(words, list) or not all(isinstance(word, str) for word in words):
 			raise ValueError("zip_evaluate error: words should be a list of string.")
 		if not isinstance(coefs, list) or not all(isinstance(coef, (int, float)) for coef in coefs):
@@ -13,7 +13,7 @@ class Evaluator:
 		return result
 
 	@staticmethod
-	def enumerate_evaluate(words, coefs):
+	def enumerate_evaluate(coefs, words):
 		if not isinstance(words, list) or not all(isinstance(word, str) for word in words):
 			raise ValueError("enumerate_evaluate error: words should be a list of string.")
 		if not isinstance(coefs, list) or not all(isinstance(coef, (int, float)) for coef in coefs):
