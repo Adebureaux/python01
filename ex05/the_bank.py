@@ -55,8 +55,6 @@ class Bank(object):
 		if debtor == None or creditor == None:
 			return False
 		if not self._is_valid(debtor) or not self._is_valid(creditor):
-			print(len(debtor.__dict__))
-			print(creditor.__dict__)
 			return False
 		if debtor == creditor:
 			return True
@@ -106,7 +104,8 @@ class Bank(object):
 		return (
 			len(account_attrs) % 2 == 1
 			and not any(attr.startswith('b') for attr in account_attrs)
-			and any(attr.startswith(('zip', 'addr')) for attr in account_attrs)
+			and any(attr.startswith('zip') for attr in account_attrs)
+			and any(attr.startswith('addr') for attr in account_attrs)
 			and 'name' in account_attrs
 			and 'id' in account_attrs
 			and 'value' in account_attrs
